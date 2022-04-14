@@ -1,0 +1,39 @@
+/* Basic display classes */
+.flexy {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.centered {
+    justify-content: center;
+}
+
+.textCentered {
+    text-align: center;
+}
+
+/* Container classes */
+.fullContainer {
+    width: 100%;
+}
+
+.fiftyContainer {
+    width: 50%;
+}
+
+.fiftyTwoContainer {
+    width: 52%;
+}
+
+/* Specifics */
+#topSec {
+    height: 50px;
+}
+
+#viewHighscores {
+    cursor: pointer;
+}
+
+#timerCont {
+    text-align: right;
+}
