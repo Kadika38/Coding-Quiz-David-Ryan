@@ -15,7 +15,9 @@ var q5Array = ["A very useful tool used during development and debugging for pri
 //other vars
 var currentQ = 1;
 var timeLeft = 75;
+var alertTimeLeft = 1;
 var finished = false;
+var lastAnswer = false;
 if (localStorage.getItem("initialsSto")) {
     console.log("they exist")
     var initials = JSON.parse(localStorage.getItem("initialsSto"));
@@ -55,6 +57,7 @@ startBtn.addEventListener("click", function() {
     var brk = document.createElement("br");
     holder.appendChild(brk);
     var listy = document.createElement("ul");
+    listy.setAttribute("id", "qHolder");
     holder.appendChild(listy);
     var brk2 = document.createElement("br");
     holder.appendChild(brk2);
@@ -78,10 +81,12 @@ function evalQ(hldr, answer) {
     qCorAnswer = qArray[5];
     if (answer == qCorAnswer) {
         console.log("Correct!");
+        lastAnswer = true;
     };
     if (answer != qCorAnswer) {
         console.log("Incorrect");
         timeLeft = timeLeft - 10;
+        lastAnswer = false;
     };
     loadQ();
 };
@@ -101,7 +106,39 @@ function loadQ() {
     };
     if (currentQ == 6) {
         finishQuiz();
+        return;
     };
+    loadAlert();
+};
+
+function startAlertTimer() {
+    alertTimeLeft = 1;
+    var timeIntervalAlert = setInterval(function() {
+        alertTimeLeft--;
+        if (alertTimeLeft == 0) {
+            clearInterval(timeIntervalAlert);
+            clearAlert();
+        };
+    }, 1000);
+}
+
+function loadAlert() {
+    var qholder = mainSec.children[0];
+    var addAlert = document.createElement("p");
+    if (lastAnswer) {
+        addAlert.textContent = "Correct!";
+    }
+    else {
+        addAlert.textContent = "Incorrect!";
+    };
+    qholder.appendChild(addAlert);
+    startAlertTimer();
+    console.log("shown alert");
+};
+
+function clearAlert() {
+    var shownAlert = mainSec.children[0].children[4];
+    shownAlert.remove();
 };
 
 function finishQuiz() {

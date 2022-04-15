@@ -37,3 +37,24 @@
 #timerCont {
     text-align: right;
 }
+
+#qHolder {
+    padding-bottom: 10px;
+    border-bottom-style: solid;
+    border-width: 0px 0px 2px 0px;
+}
+
+button {
+    background-color: #2C4251;
+    margin-bottom: 2px;
+    border-radius: 3px;
+    color: white;
+}
+
+h1, h3 {
+    font-weight: bold;
+}
+
+#starterP {
+    font-weight: bold;
+}
