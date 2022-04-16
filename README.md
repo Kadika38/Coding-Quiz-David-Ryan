@@ -8,7 +8,7 @@ This is a test
 
 ## Screenshot
 
-![Screenshot of Website](assets\screenshotOfCodingQuiz.jpg)
+![Screenshot of Website](screenshotOfCodingQuiz.jpg)
 
 ## Link to Deployed Website
 
