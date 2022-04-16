@@ -1,12 +1,14 @@
-//spot vars
+//QuerySelected vars
 var startBtn = document.querySelector("#startBtn");
 var mainSec = document.querySelector("#mainSec");
 var startSec = document.querySelector("#startSec");
 var viewHighscores = document.querySelector("#viewHighscores");
 var timer = document.querySelector("#timer");
 
-//qArrays
+//Question Arrays for storing the questions and their answers
+//q1Array only stores the correct answer of q1
 var q1Array = [0, 0, 0, 0, 0, "alerts"];
+//these other arrays hold at [0] the question, [1-4] hold the multiple choice answers, and [5] holds the correct answer.
 var q2Array = ["The condition in an if / else statement is enclosed within ______.", "quotes", "curly brackets", "parantheses", "square brackets", "parantheses"];
 var q3Array = ["Arrays in javascript can be used to store ______.", "numbers and strings", "other arrays", "booleans", "all of the above", "all of the above"];
 var q4Array = ["String values must be enclosed within ______ when being assigned to variables.", "commas", "curly brackets", "quotes", "parantheses", "quotes"];
@@ -18,34 +20,21 @@ var timeLeft = 75;
 var alertTimeLeft = 1;
 var finished = false;
 var lastAnswer = false;
+//create storage of initials/highscores by either getting them from local storage or loading in the array for the first time as an empty array
 if (localStorage.getItem("initialsSto")) {
-    console.log("they exist")
     var initials = JSON.parse(localStorage.getItem("initialsSto"));
 }
 else {
     var initials = [];
-    console.log("anyways");
 }
 
+//When the View High Scores button is clicked, it generates the view of the highscores
 viewHighscores.addEventListener("click", function() {
     loadHighscores();
 })
 
-function startTimer() {
-    var timeInterval = setInterval(function() {
-        timeLeft--;
-        timer.textContent = timeLeft;
-        if (timeLeft == 0) {
-            clearInterval(timeInterval);
-            finishQuiz();
-        };
-        if (finished) {
-            clearInterval(timeInterval);
-        };
-    }, 1000);
-}
-
 //add function to start quiz button
+//removes startSec and replaces it with the first question, then run evalQ on the first multiple choice answer the user clicks
 startBtn.addEventListener("click", function() {
     startSec.remove();
     startTimer();
@@ -70,30 +59,31 @@ startBtn.addEventListener("click", function() {
         listyChildren[i].addEventListener("click", function() {
             targ = event.target;
             val = targ.textContent;
-            evalQ(holder, val);
+            evalQ(val);
         })
     };
 });
 
-function evalQ(hldr, answer) {
-    console.log("evaluating");
+//Evaluates the answer that the user chose for correctness and passes on the boolean value of the answer
+//Also penalizes time for wrong answers
+//And runs loadQ to load the next question.
+function evalQ(answer) {
     qArray = getqArray();
     qCorAnswer = qArray[5];
     if (answer == qCorAnswer) {
-        console.log("Correct!");
         lastAnswer = true;
     };
     if (answer != qCorAnswer) {
-        console.log("Incorrect");
         timeLeft = timeLeft - 10;
         lastAnswer = false;
     };
     loadQ();
 };
 
+//Loads the next question from the Question Arrays.  If there are no more questions, it runs finishQuiz.
+//Also loads the alert that displays whether or not the last question was answered correctly
 function loadQ() {
     currentQ++;
-    console.log(currentQ);
     if (currentQ < 6) {
         qnum = getqArray();
         qtext = mainSec.children[0].children[0];
@@ -111,39 +101,10 @@ function loadQ() {
     loadAlert();
 };
 
-function startAlertTimer() {
-    alertTimeLeft = 1;
-    var timeIntervalAlert = setInterval(function() {
-        alertTimeLeft--;
-        if (alertTimeLeft == 0) {
-            clearInterval(timeIntervalAlert);
-            clearAlert();
-        };
-    }, 1000);
-}
-
-function loadAlert() {
-    var qholder = mainSec.children[0];
-    var addAlert = document.createElement("p");
-    if (lastAnswer) {
-        addAlert.textContent = "Correct!";
-    }
-    else {
-        addAlert.textContent = "Incorrect!";
-    };
-    qholder.appendChild(addAlert);
-    startAlertTimer();
-    console.log("shown alert");
-};
-
-function clearAlert() {
-    var shownAlert = mainSec.children[0].children[4];
-    shownAlert.remove();
-};
-
+//When there are no more questions, finishQuiz is run.  It generates the prompt for inputting initials to store the score and add it to the highscore board
+//When the submit button is clicked, the initials and score are stored in local storage and loadHighscores() is run
 function finishQuiz() {
     finished = true;
-    console.log("Youre done");
     mainSec.children[0].remove();
     var holder = document.createElement("div");
     mainSec.appendChild(holder);
@@ -181,6 +142,8 @@ function finishQuiz() {
     });
 };
 
+//Generates the list of highscores and their corresponding initials
+//also offers the ability to clear the scoreboard and to go back to the quiz start page
 function loadHighscores() {
     mainSec.children[0].remove();
     var holder = document.createElement("div");
@@ -218,6 +181,7 @@ function loadHighscores() {
     });
 };
 
+//when the user restarts the quiz, the original page is generated again
 function beginAgain() {
     finished = false;
     mainSec.children[0].remove();
@@ -247,6 +211,7 @@ function beginAgain() {
     });
 };
 
+//function that runs when the quiz is started for a second or greater consecutive time.  Resets the time left and generates the quiz
 function quizAgain() {
     timeLeft = 75;
     startTimer();
@@ -272,12 +237,63 @@ function quizAgain() {
         listyChildren[i].addEventListener("click", function() {
             targ = event.target;
             val = targ.textContent;
-            evalQ(holder, val);
+            evalQ(val);
         })
     };
 }
 
+//Whenever a question is answered and a new question is loaded, loadAlert() runs.
+//It checks the correctness of the users answer and generates a <p> element showing this.
+//startAlertTimer runs after this to make sure the alert only last for 1 second
+function loadAlert() {
+    var qholder = mainSec.children[0];
+    var addAlert = document.createElement("p");
+    if (lastAnswer) {
+        addAlert.textContent = "Correct!";
+    }
+    else {
+        addAlert.textContent = "Incorrect!";
+    };
+    qholder.appendChild(addAlert);
+    startAlertTimer();
+};
+
+//sets a 1 second timer and runs clearAlert() at the end of the 1 second
+function startAlertTimer() {
+    alertTimeLeft = 1;
+    var timeIntervalAlert = setInterval(function() {
+        alertTimeLeft--;
+        if (alertTimeLeft == 0) {
+            clearInterval(timeIntervalAlert);
+            clearAlert();
+        };
+    }, 1000);
+}
+
+//removes the alert <p>
+function clearAlert() {
+    var shownAlert = mainSec.children[0].children[4];
+    shownAlert.remove();
+};
+
+//This is the timer function for the quiz.  It reduces the time left every second until the quiz has been finished
+//If the time runs out, it ends the quiz
+function startTimer() {
+    var timeInterval = setInterval(function() {
+        timeLeft--;
+        timer.textContent = timeLeft;
+        if (timeLeft == 0) {
+            clearInterval(timeInterval);
+            finishQuiz();
+        };
+        if (finished) {
+            clearInterval(timeInterval);
+        };
+    }, 1000);
+}
+
 //helper funcs
+//gets the right question array based on the current question
 function getqArray() {
     if (currentQ == 1) {
         return q1Array;
@@ -296,6 +312,7 @@ function getqArray() {
     }
 }
 
+//adds buttons as list items for the multiple choice answers
 function addLi(thatList, stringy) {
     dude = document.createElement("li");
     dude2 = document.createElement("button");
@@ -304,9 +321,9 @@ function addLi(thatList, stringy) {
     thatList.appendChild(dude);
 }
 
+//adds the stored initials and highscores as list items for use in the high scores scoreboard
 function addLiHS(thatList, objecty) {
     dude = document.createElement("li");
     dude.textContent = objecty.in + " " + objecty.hs;
     thatList.appendChild(dude);
 }
-

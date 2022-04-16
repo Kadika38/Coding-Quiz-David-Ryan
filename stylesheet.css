@@ -26,6 +26,17 @@
 }
 
 /* Specifics */
+h1, h3 {
+    font-weight: bold;
+}
+
+button {
+    background-color: #2C4251;
+    margin-bottom: 2px;
+    border-radius: 3px;
+    color: white;
+}
+
 #topSec {
     height: 50px;
 }
@@ -38,23 +49,12 @@
     text-align: right;
 }
 
+#starterP {
+    font-weight: bold;
+}
+
 #qHolder {
     padding-bottom: 10px;
     border-bottom-style: solid;
     border-width: 0px 0px 2px 0px;
-}
-
-button {
-    background-color: #2C4251;
-    margin-bottom: 2px;
-    border-radius: 3px;
-    color: white;
-}
-
-h1, h3 {
-    font-weight: bold;
-}
-
-#starterP {
-    font-weight: bold;
 }
